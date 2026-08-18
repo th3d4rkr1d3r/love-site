@@ -189,14 +189,14 @@ async function main() {
     data: [
       {
         coupleId: couple.id,
-        url: "/uploads/01-noite.png",
+        url: "/uploads/01-noite.jpg",
         alt: "Gabriel e Stefani",
         sortOrder: 0,
         mediaType: "image",
       },
       {
         coupleId: couple.id,
-        url: "/uploads/02-flipper.png",
+        url: "/uploads/02-flipper.jpg",
         alt: "Gabriel e Stefani no Flipper",
         date: new Date("2026-08-07T20:57:00-03:00"),
         sortOrder: 1,
@@ -204,7 +204,7 @@ async function main() {
       },
       {
         coupleId: couple.id,
-        url: "/uploads/03-praca.png",
+        url: "/uploads/03-praca.jpg",
         alt: "Gabriel e Stefani",
         sortOrder: 2,
         mediaType: "image",

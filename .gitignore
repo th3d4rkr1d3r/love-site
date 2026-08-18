@@ -37,6 +37,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# uploads locais (adapter V0)
-/public/uploads/*
-!/public/uploads/.gitkeep
+# A Vercel omite arquivos do .gitignore no deploy, mesmo se estiverem no git.
+# Mídia pública versionada fica em public/uploads.
