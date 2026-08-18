@@ -1,5 +1,7 @@
 "use client";
 
+import { SITE_SONG_ELEMENT_ID } from "@/lib/site-song";
+
 type SiteAudioState = {
   playing: boolean;
   blocked: boolean;
@@ -24,6 +26,7 @@ let audio: HTMLAudioElement | null = null;
 let currentUrl: string | null = null;
 let listenersBound = false;
 let wantPlaying = false;
+let unlockBound = false;
 
 function emit(partial: Partial<SiteAudioState>) {
   state = { ...state, ...partial };
@@ -40,6 +43,9 @@ function bindAudio(element: HTMLAudioElement) {
   element.addEventListener("timeupdate", () => emit({ current: element.currentTime }));
   element.addEventListener("durationchange", syncDuration);
   element.addEventListener("loadedmetadata", syncDuration);
+  element.addEventListener("canplay", () => {
+    if (wantPlaying && element.paused) startSiteAudio();
+  });
   element.addEventListener("play", () => emit({ playing: true, blocked: false }));
   element.addEventListener("pause", () => {
     if (wantPlaying) {
@@ -48,6 +54,21 @@ function bindAudio(element: HTMLAudioElement) {
     }
     emit({ playing: false });
   });
+}
+
+function armUnlock() {
+  if (unlockBound || typeof window === "undefined") return;
+  unlockBound = true;
+  const events = ["pointerdown", "touchstart", "click", "keydown"] as const;
+  const unlock = (event: Event) => {
+    const target = event.target;
+    if (target instanceof Element && target.closest("[data-sound-toggle]")) return;
+    startSiteAudio();
+    if (!audio?.paused) {
+      events.forEach((name) => window.removeEventListener(name, unlock, true));
+    }
+  };
+  events.forEach((name) => window.addEventListener(name, unlock, true));
 }
 
 export function subscribeSiteAudio(onStoreChange: () => void) {
@@ -66,17 +87,23 @@ export function getServerSiteAudioState() {
 export function ensureSiteAudio(url: string) {
   if (typeof window === "undefined") return null;
   if (!audio) {
-    audio = new Audio();
+    audio =
+      (document.getElementById(SITE_SONG_ELEMENT_ID) as HTMLAudioElement | null) ??
+      new Audio();
     audio.preload = "auto";
     audio.loop = true;
+    audio.playsInline = true;
     audio.volume = DEFAULT_VOLUME;
     bindAudio(audio);
   }
+  const abs = new URL(url, window.location.href).href;
   if (currentUrl !== url) {
     currentUrl = url;
-    audio.src = url;
-    audio.load();
+    if (audio.src !== abs) {
+      audio.src = url;
+    }
   }
+  armUnlock();
   return audio;
 }
 
@@ -93,8 +120,14 @@ export function startSiteAudio() {
     .catch((error: unknown) => {
       const name =
         error && typeof error === "object" && "name" in error ? String(error.name) : "";
-      if (name === "AbortError") return;
-      wantPlaying = false;
+      if (name === "AbortError") {
+        window.setTimeout(() => {
+          if (wantPlaying && audio?.paused) {
+            audio.play().catch(() => emit({ blocked: true, playing: false }));
+          }
+        }, 120);
+        return;
+      }
       emit({ blocked: true, playing: false });
     });
 }
