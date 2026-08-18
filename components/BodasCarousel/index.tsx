@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { animate, motion, useMotionValue } from "framer-motion";
 
 import { LoveCounter } from "@/components/LoveCounter";
 import { getBodaStatuses, nextBodaIndex, type BodaStatus } from "@/lib/bodas";
@@ -200,7 +200,14 @@ export function BodasCarousel({ startIso }: { startIso: string }) {
   const statuses = useMemo(() => getBodaStatuses(new Date(startIso)), [startIso]);
   const [index, setIndex] = useState(() => nextBodaIndex(statuses));
   const dragged = useRef(false);
+  const x = useMotionValue(0);
+  const last = Math.max(0, statuses.length - 1);
   const active = statuses[index];
+
+  useEffect(() => {
+    const controls = animate(x, -index * STEP, { type: "spring", stiffness: 260, damping: 28 });
+    return () => controls.stop();
+  }, [index, x]);
 
   return (
     <section id="bodas" className="relative min-h-screen overflow-x-hidden py-24">
@@ -222,10 +229,10 @@ export function BodasCarousel({ startIso }: { startIso: string }) {
 
       <motion.div
         className="flex cursor-grab active:cursor-grabbing"
-        style={{ gap: GAP, paddingLeft: EDGE, paddingRight: EDGE }}
-        animate={{ x: -index * STEP }}
+        style={{ x, gap: GAP, paddingLeft: EDGE, paddingRight: EDGE }}
         drag="x"
-        dragElastic={0.08}
+        dragConstraints={{ left: -last * STEP, right: 0 }}
+        dragElastic={0.12}
         dragMomentum={false}
         onDragStart={() => {
           dragged.current = true;
@@ -234,14 +241,16 @@ export function BodasCarousel({ startIso }: { startIso: string }) {
           const projected = info.offset.x + info.velocity.x * 0.18;
           const delta = projected < -40 ? 1 : projected > 40 ? -1 : 0;
           setIndex((current) => {
-            const next = Math.min(statuses.length - 1, Math.max(0, current + delta));
+            const next = Math.min(last, Math.max(0, current + delta));
+            if (next === current) {
+              animate(x, -current * STEP, { type: "spring", stiffness: 260, damping: 28 });
+            }
             return next;
           });
           window.setTimeout(() => {
             dragged.current = false;
           }, 80);
         }}
-        transition={{ type: "spring", stiffness: 260, damping: 28 }}
       >
         {statuses.map((boda, i) => {
           const selected = i === index;

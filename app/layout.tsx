@@ -24,6 +24,7 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&display=swap"
           rel="stylesheet"
         />
+        <link rel="preload" href="/uploads/pra-sempre-com-voce.mp3" as="audio" />
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){try{var p=location.pathname;if(p!=='/'&&p!=='')return;history.scrollRestoration='manual';if(location.hash)history.replaceState(null,'',p+location.search);window.scrollTo(0,0);}catch(e){}})();`,

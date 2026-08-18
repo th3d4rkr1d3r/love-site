@@ -42,9 +42,11 @@ function bindAudio(element: HTMLAudioElement) {
   element.addEventListener("loadedmetadata", syncDuration);
   element.addEventListener("play", () => emit({ playing: true, blocked: false }));
   element.addEventListener("pause", () => {
+    if (wantPlaying) {
+      element.play().catch(() => {});
+      return;
+    }
     emit({ playing: false });
-    if (!wantPlaying) return;
-    element.play().catch(() => {});
   });
 }
 

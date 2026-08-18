@@ -13,21 +13,17 @@ export function SiteAudio({ url }: SiteAudioProps) {
 
   useEffect(() => {
     if (!url) return;
-    const id = window.setTimeout(() => start(), 400);
-    return () => window.clearTimeout(id);
+    start();
   }, [url, start]);
 
   useEffect(() => {
     if (!blocked) return;
-    const unlock = (event: PointerEvent) => {
-      if (event.target instanceof Element && event.target.closest("[data-coverflow]")) {
-        return;
-      }
+    const unlock = () => {
       start();
-      window.removeEventListener("pointerup", unlock);
+      window.removeEventListener("pointerdown", unlock);
     };
-    window.addEventListener("pointerup", unlock);
-    return () => window.removeEventListener("pointerup", unlock);
+    window.addEventListener("pointerdown", unlock);
+    return () => window.removeEventListener("pointerdown", unlock);
   }, [blocked, start]);
 
   if (!url) return null;
