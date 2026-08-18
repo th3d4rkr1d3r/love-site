@@ -1,36 +1,48 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# love-site
 
-## Getting Started
+Site pessoal de Gabriel & Stefani. Stack: Next.js 14 (App Router) + TypeScript, Tailwind, shadcn/ui, Prisma, PostgreSQL.
 
-First, run the development server:
+O site público fica em **coming soon** enquanto `Couple.isPublic = false`.
+
+## Local
+
+1. Suba o Postgres:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+docker compose up -d
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Copie o ambiente e ajuste se precisar:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+cp .env.example .env
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+3. Instale, migre e popule:
 
-## Learn More
+```bash
+npm install
+npx prisma migrate deploy
+npm run db:seed
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+Abra [http://localhost:3000](http://localhost:3000). Em desenvolvimento, `npm run db:migrate:dev` também vale (cria/nomeia migrations). **Em produção, nunca use `migrate dev`.**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Vercel
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `DATABASE_URL` (pooled) e `DIRECT_URL` (conexão direta) no dashboard, por ambiente.
+- Demais chaves: ver `.env.example` (`NEXTAUTH_*`, `ADMIN_*`, R2, Mapbox). Nada disso vai no git.
+- Build já roda `prisma generate` (`postinstall` + script `build`).
+- Depois do primeiro deploy, no ambiente de produção:
 
-## Deploy on Vercel
+```bash
+npx prisma migrate deploy
+npx prisma db seed
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+O seed **não** roda automaticamente a cada deploy. Rode na mão quando quiser.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Domínio próprio: Project Settings → Domains, quando existir. Até lá, `*.vercel.app` serve — o coming soon continua na frente.
+
+R2 (V3): política CORS no bucket liberando `PUT`/`POST` a partir do domínio de produção. Upload direto do browser; API routes da Vercel não carregam arquivos grandes (~4,5 MB).

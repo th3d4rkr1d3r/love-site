@@ -2,22 +2,56 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: 240 6% 4%;
+    --foreground: 36 20% 92%;
+    --card: 240 8% 6%;
+    --card-foreground: 36 20% 92%;
+    --popover: 240 8% 6%;
+    --popover-foreground: 36 20% 92%;
+    --primary: 352 68% 25%;
+    --primary-foreground: 24 33% 95%;
+    --secondary: 240 6% 10%;
+    --secondary-foreground: 36 20% 92%;
+    --muted: 240 5% 12%;
+    --muted-foreground: 36 8% 62%;
+    --accent: 41 54% 54%;
+    --accent-foreground: 240 6% 8%;
+    --destructive: 0 72% 42%;
+    --destructive-foreground: 24 33% 95%;
+    --border: 41 30% 28%;
+    --input: 240 5% 14%;
+    --ring: 41 54% 54%;
+    --radius: 0.75rem;
+    --wine: 352 68% 25%;
+    --gold: 41 54% 54%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-ink text-foreground font-sans antialiased;
+    background-image: radial-gradient(
+      120% 80% at 50% 0%,
+      #0d0d0f 0%,
+      #0a0a0b 55%,
+      #070708 100%
+    );
+    background-attachment: fixed;
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  .glass {
+    @apply rounded-xl border border-gold/20 bg-white/[0.04] backdrop-blur-md;
+  }
 }
 
 @layer utilities {

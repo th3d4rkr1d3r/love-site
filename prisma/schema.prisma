@@ -1,0 +1,143 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Couple {
+  id                 String         @id @default(cuid())
+  nameA              String
+  nameB              String
+  relationshipStart  DateTime
+  coverPhotoUrl      String?
+  theme              String         @default("dark-vinho-dourado")
+  accentColor        String         @default("#6B1420")
+  goldColor          String         @default("#C9A24B")
+  isPublic           Boolean        @default(false)
+  slug               String         @unique
+  enabledSections    Json
+  quizResultMessages Json?
+  wrappedHighlights  Json?
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+  memories           Memory[]
+  photos             Photo[]
+  places             Place[]
+  songs              Song[]
+  letters            Letter[]
+  quizQuestions      QuizQuestion[]
+  adminUsers         AdminUser[]
+}
+
+model Memory {
+  id          String   @id @default(cuid())
+  coupleId    String
+  couple      Couple   @relation(fields: [coupleId], references: [id])
+  title       String
+  description String?
+  date        DateTime
+  photoUrl    String?
+  placeId     String?
+  place       Place?   @relation(fields: [placeId], references: [id])
+  category    String?
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([coupleId])
+}
+
+model Photo {
+  id        String    @id @default(cuid())
+  coupleId  String
+  couple    Couple    @relation(fields: [coupleId], references: [id])
+  url       String
+  caption   String?
+  alt       String?
+  date      DateTime?
+  placeId   String?
+  place     Place?    @relation(fields: [placeId], references: [id])
+  sortOrder Int       @default(0)
+  width     Int?
+  height    Int?
+  mediaType String    @default("image")
+  createdAt DateTime  @default(now())
+
+  @@index([coupleId])
+}
+
+model Place {
+  id          String   @id @default(cuid())
+  coupleId    String
+  couple      Couple   @relation(fields: [coupleId], references: [id])
+  name        String
+  description String?
+  address     String?
+  latitude    Float
+  longitude   Float
+  isPrivate   Boolean  @default(false)
+  photoUrl    String?
+  sortOrder   Int      @default(0)
+  memories    Memory[]
+  photos      Photo[]
+  createdAt   DateTime @default(now())
+
+  @@index([coupleId])
+}
+
+model Song {
+  id        String   @id @default(cuid())
+  coupleId  String
+  couple    Couple   @relation(fields: [coupleId], references: [id])
+  title     String
+  artist    String
+  url       String
+  note      String?
+  provider  String    @default("file")
+  coverUrl  String?
+  sortOrder Int       @default(0)
+  createdAt DateTime  @default(now())
+
+  @@index([coupleId])
+}
+
+model Letter {
+  id        String   @id @default(cuid())
+  coupleId  String
+  couple    Couple   @relation(fields: [coupleId], references: [id])
+  title     String
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([coupleId])
+}
+
+model QuizQuestion {
+  id           String   @id @default(cuid())
+  coupleId     String
+  couple       Couple   @relation(fields: [coupleId], references: [id])
+  question     String
+  options      Json
+  correctIndex Int
+  sortOrder    Int      @default(0)
+  createdAt    DateTime @default(now())
+
+  @@index([coupleId])
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  coupleId     String
+  couple       Couple   @relation(fields: [coupleId], references: [id])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([coupleId])
+}
