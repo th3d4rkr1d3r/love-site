@@ -23,6 +23,7 @@ let state: SiteAudioState = idle;
 let audio: HTMLAudioElement | null = null;
 let currentUrl: string | null = null;
 let listenersBound = false;
+let wantPlaying = false;
 
 function emit(partial: Partial<SiteAudioState>) {
   state = { ...state, ...partial };
@@ -40,7 +41,11 @@ function bindAudio(element: HTMLAudioElement) {
   element.addEventListener("durationchange", syncDuration);
   element.addEventListener("loadedmetadata", syncDuration);
   element.addEventListener("play", () => emit({ playing: true, blocked: false }));
-  element.addEventListener("pause", () => emit({ playing: false }));
+  element.addEventListener("pause", () => {
+    emit({ playing: false });
+    if (!wantPlaying) return;
+    element.play().catch(() => {});
+  });
 }
 
 export function subscribeSiteAudio(onStoreChange: () => void) {
@@ -75,10 +80,21 @@ export function ensureSiteAudio(url: string) {
 
 export function startSiteAudio() {
   if (!audio) return;
+  wantPlaying = true;
+  if (!audio.paused) {
+    emit({ playing: true, blocked: false });
+    return;
+  }
   audio
     .play()
     .then(() => emit({ playing: true, blocked: false }))
-    .catch(() => emit({ blocked: true, playing: false }));
+    .catch((error: unknown) => {
+      const name =
+        error && typeof error === "object" && "name" in error ? String(error.name) : "";
+      if (name === "AbortError") return;
+      wantPlaying = false;
+      emit({ blocked: true, playing: false });
+    });
 }
 
 export function toggleSiteAudio() {
@@ -87,6 +103,7 @@ export function toggleSiteAudio() {
     startSiteAudio();
     return;
   }
+  wantPlaying = false;
   audio.pause();
 }
 

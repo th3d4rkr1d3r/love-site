@@ -19,9 +19,15 @@ export function SiteAudio({ url }: SiteAudioProps) {
 
   useEffect(() => {
     if (!blocked) return;
-    const unlock = () => start();
-    window.addEventListener("pointerdown", unlock, { once: true });
-    return () => window.removeEventListener("pointerdown", unlock);
+    const unlock = (event: PointerEvent) => {
+      if (event.target instanceof Element && event.target.closest("[data-coverflow]")) {
+        return;
+      }
+      start();
+      window.removeEventListener("pointerup", unlock);
+    };
+    window.addEventListener("pointerup", unlock);
+    return () => window.removeEventListener("pointerup", unlock);
   }, [blocked, start]);
 
   if (!url) return null;

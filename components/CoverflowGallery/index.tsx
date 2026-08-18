@@ -34,6 +34,8 @@ export function CoverflowGallery({ photos }: CoverflowGalleryProps) {
   const [dragX, setDragX] = useState(0);
   const [dragging, setDragging] = useState(false);
   const startX = useRef<number | null>(null);
+  const startY = useRef<number | null>(null);
+  const axis = useRef<"x" | "y" | null>(null);
   const dragXRef = useRef(0);
   const dragged = useRef(false);
   const { openIndex, setOpenIndex, close, prev, next } = useLightbox(photos.length);
@@ -46,15 +48,22 @@ export function CoverflowGallery({ photos }: CoverflowGalleryProps) {
     [photos.length],
   );
 
+  const resetGesture = useCallback(() => {
+    startX.current = null;
+    startY.current = null;
+    axis.current = null;
+    dragXRef.current = 0;
+    setDragX(0);
+    setDragging(false);
+  }, []);
+
   const settle = useCallback(
     (deltaX: number) => {
       const steps = Math.round(deltaX / STEP);
       if (steps !== 0) go(-steps);
-      setDragX(0);
-      setDragging(false);
-      startX.current = null;
+      resetGesture();
     },
-    [go],
+    [go, resetGesture],
   );
 
   if (photos.length === 0) {
@@ -75,28 +84,48 @@ export function CoverflowGallery({ photos }: CoverflowGalleryProps) {
   return (
     <>
       <div
-        className="relative mx-auto w-full max-w-6xl cursor-grab select-none touch-none active:cursor-grabbing"
+        data-coverflow
+        className="relative mx-auto w-full max-w-6xl cursor-grab select-none touch-pan-y active:cursor-grabbing"
         onPointerDown={(event) => {
           startX.current = event.clientX;
+          startY.current = event.clientY;
+          axis.current = null;
           dragged.current = false;
-          setDragging(true);
-          setDragX(0);
           dragXRef.current = 0;
-          (event.currentTarget as HTMLDivElement).setPointerCapture(event.pointerId);
+          setDragX(0);
         }}
         onPointerMove={(event) => {
-          if (startX.current == null) return;
-          const delta = event.clientX - startX.current;
-          if (Math.abs(delta) > 8) dragged.current = true;
-          dragXRef.current = delta;
-          setDragX(delta);
+          if (startX.current == null || startY.current == null) return;
+          const deltaX = event.clientX - startX.current;
+          const deltaY = event.clientY - startY.current;
+          if (axis.current == null) {
+            if (Math.hypot(deltaX, deltaY) < 10) return;
+            axis.current = Math.abs(deltaX) > Math.abs(deltaY) ? "x" : "y";
+            if (axis.current === "y") {
+              resetGesture();
+              return;
+            }
+            setDragging(true);
+            event.currentTarget.setPointerCapture(event.pointerId);
+          }
+          if (axis.current !== "x") return;
+          if (Math.abs(deltaX) > 8) dragged.current = true;
+          dragXRef.current = deltaX;
+          setDragX(deltaX);
         }}
         onPointerUp={(event) => {
-          if (startX.current == null) return;
-          settle(event.clientX - startX.current);
+          if (axis.current === "x" && startX.current != null) {
+            settle(event.clientX - startX.current);
+            return;
+          }
+          resetGesture();
         }}
         onPointerCancel={() => {
-          settle(dragXRef.current);
+          if (axis.current === "x") {
+            settle(dragXRef.current);
+            return;
+          }
+          resetGesture();
         }}
       >
         <div
