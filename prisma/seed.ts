@@ -70,7 +70,7 @@ async function main() {
       theme: "dark-vinho-dourado",
       accentColor: "#6B1420",
       goldColor: "#C9A24B",
-      isPublic: false,
+      isPublic: true,
       enabledSections,
       quizResultMessages,
       wrappedHighlights,
@@ -82,7 +82,7 @@ async function main() {
       theme: "dark-vinho-dourado",
       accentColor: "#6B1420",
       goldColor: "#C9A24B",
-      isPublic: false,
+      isPublic: true,
       slug: "gabriel-stefani",
       enabledSections,
       quizResultMessages,
@@ -184,6 +184,34 @@ async function main() {
     });
   }
 
+  await prisma.photo.deleteMany({ where: { coupleId: couple.id } });
+  await prisma.photo.createMany({
+    data: [
+      {
+        coupleId: couple.id,
+        url: "/uploads/01-noite.png",
+        alt: "Gabriel e Stefani",
+        sortOrder: 0,
+        mediaType: "image",
+      },
+      {
+        coupleId: couple.id,
+        url: "/uploads/02-flipper.png",
+        alt: "Gabriel e Stefani no Flipper",
+        date: new Date("2026-08-07T20:57:00-03:00"),
+        sortOrder: 1,
+        mediaType: "image",
+      },
+      {
+        coupleId: couple.id,
+        url: "/uploads/03-praca.png",
+        alt: "Gabriel e Stefani",
+        sortOrder: 2,
+        mediaType: "image",
+      },
+    ],
+  });
+
   const songData = {
     title: "Pra Sempre Com Você",
     artist: "Jorge & Mateus",
@@ -224,7 +252,7 @@ async function main() {
     console.warn("ADMIN_EMAIL / ADMIN_PASSWORD ausentes — AdminUser não foi criado.");
   }
 
-  console.log("Seed concluído: Gabriel & Stefani, 5 memórias, Itajaí (label público).");
+  console.log("Seed concluído: Gabriel & Stefani, 5 memórias, 3 fotos, Itajaí (label público).");
 }
 
 main()
