@@ -10,13 +10,13 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["var(--font-inter)", "sans-serif"],
-        serif: ["var(--font-fraunces)", "serif"],
+        sans: ["Outfit", "ui-sans-serif", "system-ui", "sans-serif"],
+        serif: ['"Playfair Display"', "ui-serif", "Georgia", "serif"],
       },
       colors: {
         ink: {
-          DEFAULT: "#0A0A0B",
-          soft: "#0D0D0F",
+          DEFAULT: "#21151B",
+          soft: "#2B151E",
         },
         wine: {
           DEFAULT: "#6B1420",
@@ -67,7 +67,7 @@ const config: Config = {
       },
       backgroundImage: {
         "depth-vignette":
-          "radial-gradient(120% 80% at 50% 0%, #0D0D0F 0%, #0A0A0B 55%, #070708 100%)",
+          "radial-gradient(circle at 50% 48%, #421B29 0%, #2B151E 30%, #1D1117 60%, #110C10 100%)",
       },
     },
   },

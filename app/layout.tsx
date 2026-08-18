@@ -1,19 +1,8 @@
 import type { Metadata } from "next";
-import { Fraunces, Inter } from "next/font/google";
+import { Suspense } from "react";
 
+import { SiteAudioLoader } from "@/components/SiteAudio/Loader";
 import "./globals.css";
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-});
-
-const fraunces = Fraunces({
-  subsets: ["latin"],
-  variable: "--font-fraunces",
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   title: "Gabriel & Stefani",
@@ -28,8 +17,24 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
-      <body className={`${inter.variable} ${fraunces.variable} min-h-screen font-sans`}>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&display=swap"
+          rel="stylesheet"
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var p=location.pathname;if(p!=='/'&&p!=='')return;history.scrollRestoration='manual';if(location.hash)history.replaceState(null,'',p+location.search);window.scrollTo(0,0);}catch(e){}})();`,
+          }}
+        />
+      </head>
+      <body className="min-h-screen antialiased">
         {children}
+        <Suspense fallback={null}>
+          <SiteAudioLoader />
+        </Suspense>
       </body>
     </html>
   );

@@ -23,3 +23,15 @@ export type WrappedHighlights = {
 export type SongProvider = "file" | "spotify" | "youtube";
 
 export type MediaType = "image" | "video";
+
+export type PublicPhoto = {
+  id: string;
+  url: string;
+  caption: string | null;
+  alt: string | null;
+  date: string | null;
+  width: number | null;
+  height: number | null;
+  mediaType: string;
+  placeName: string | null;
+};

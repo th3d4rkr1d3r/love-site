@@ -4,24 +4,24 @@
 
 @layer base {
   :root {
-    --background: 240 6% 4%;
-    --foreground: 36 20% 92%;
-    --card: 240 8% 6%;
-    --card-foreground: 36 20% 92%;
-    --popover: 240 8% 6%;
-    --popover-foreground: 36 20% 92%;
+    --background: 342 28% 10%;
+    --foreground: 36 22% 93%;
+    --card: 342 32% 13%;
+    --card-foreground: 36 22% 93%;
+    --popover: 342 32% 13%;
+    --popover-foreground: 36 22% 93%;
     --primary: 352 68% 25%;
     --primary-foreground: 24 33% 95%;
-    --secondary: 240 6% 10%;
-    --secondary-foreground: 36 20% 92%;
-    --muted: 240 5% 12%;
-    --muted-foreground: 36 8% 62%;
+    --secondary: 342 22% 14%;
+    --secondary-foreground: 36 22% 93%;
+    --muted: 342 18% 16%;
+    --muted-foreground: 36 10% 68%;
     --accent: 41 54% 54%;
-    --accent-foreground: 240 6% 8%;
+    --accent-foreground: 330 20% 8%;
     --destructive: 0 72% 42%;
     --destructive-foreground: 24 33% 95%;
-    --border: 41 30% 28%;
-    --input: 240 5% 14%;
+    --border: 41 30% 32%;
+    --input: 342 16% 16%;
     --ring: 41 54% 54%;
     --radius: 0.75rem;
     --wine: 352 68% 25%;
@@ -34,28 +34,61 @@
 
   html {
     color-scheme: dark;
+    scroll-behavior: auto;
+    overflow-x: hidden;
   }
 
   body {
-    @apply bg-ink text-foreground font-sans antialiased;
-    background-image: radial-gradient(
-      120% 80% at 50% 0%,
-      #0d0d0f 0%,
-      #0a0a0b 55%,
-      #070708 100%
-    );
+    @apply bg-ink text-foreground antialiased;
+    font-family: Outfit, ui-sans-serif, system-ui, sans-serif;
+    background-color: #21151b;
+    background-image:
+      radial-gradient(ellipse 58% 48% at 50% 48%, rgba(90, 31, 50, 0.42), transparent 70%),
+      radial-gradient(circle at 50% 48%, #421b29 0%, #2b151e 30%, #1d1117 60%, #110c10 100%);
     background-attachment: fixed;
+  }
+
+  .font-serif {
+    font-family: "Playfair Display", ui-serif, Georgia, serif;
   }
 }
 
 @layer components {
   .glass {
-    @apply rounded-xl border border-gold/20 bg-white/[0.04] backdrop-blur-md;
+    @apply rounded-xl border border-gold/25 bg-white/[0.06] backdrop-blur-md;
   }
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+}
+
+@keyframes petal-fall {
+  0% {
+    transform: translate3d(0, -8vh, 0) rotate(0deg);
+    opacity: 0;
+  }
+  8% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate3d(var(--petal-drift), 110vh, 0) rotate(var(--petal-spin));
+    opacity: 0.15;
+  }
+}
+
+.petal-fall {
+  animation-name: petal-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform, opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .petal-fall {
+    animation: none;
+    display: none;
   }
 }

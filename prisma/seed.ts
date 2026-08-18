@@ -37,13 +37,36 @@ function atSaoPaulo(isoDate: string) {
   return new Date(`${isoDate}T12:00:00-03:00`);
 }
 
+const LETTER_CONTENT = `Meu amor,
+
+Eu queria aproveitar esse espaço para te agradecer.
+
+Obrigado por ter entrado na minha vida e por tudo que você trouxe para os meus dias desde que nos conhecemos. Em tão pouco tempo, vivemos tantas coisas, criamos tantas memórias e compartilhamos momentos que já se tornaram muito importantes para mim.
+
+Obrigado por cada conversa, cada risada, cada abraço, cada beijo, cada carinho e até pelas nossas brincadeiras e nossas besteiras. Obrigado por me ouvir, por cuidar de mim e por me permitir fazer parte da sua vida também.
+
+Eu sou muito grato por ter te conhecido e por tudo que estamos construindo juntos. Espero que a gente continue vivendo muitos momentos assim, conhecendo lugares novos, realizando nossos planos, comemorando nossas conquistas e estando um ao lado do outro também nos dias difíceis.
+
+Eu desejo que nunca falte amor, respeito, cumplicidade e felicidade entre nós. Que a gente continue escolhendo um ao outro todos os dias e que, quando olharmos para trás, possamos perceber o quanto de história construímos juntos.
+
+Você se tornou alguém muito especial para mim, muito mais rápido do que eu poderia imaginar.
+
+Obrigado por tudo, meu amor.
+
+Que a nossa história continue sendo cheia de momentos que valham a pena guardar para sempre.
+
+Eu te amo. ❤️
+
+Com todo meu amor,
+Gabriel`;
+
 async function main() {
   const couple = await prisma.couple.upsert({
     where: { slug: "gabriel-stefani" },
     update: {
       nameA: "Gabriel",
       nameB: "Stefani",
-      relationshipStart: atSaoPaulo("2026-07-31"),
+      relationshipStart: atSaoPaulo("2026-07-20"),
       theme: "dark-vinho-dourado",
       accentColor: "#6B1420",
       goldColor: "#C9A24B",
@@ -55,7 +78,7 @@ async function main() {
     create: {
       nameA: "Gabriel",
       nameB: "Stefani",
-      relationshipStart: atSaoPaulo("2026-07-31"),
+      relationshipStart: atSaoPaulo("2026-07-20"),
       theme: "dark-vinho-dourado",
       accentColor: "#6B1420",
       goldColor: "#C9A24B",
@@ -98,72 +121,43 @@ async function main() {
     data: [
       {
         coupleId: couple.id,
-        title: "❤️ Primeiro encontro",
-        description:
-          "Gabriel foi buscar Stefani. Depois ela disse que tinha sido incrível.",
-        date: atSaoPaulo("2026-07-31"),
-        category: "encontro",
-        placeId: firstPlace.id,
+        title: "💬 Onde tudo começou",
+        description: null,
+        date: atSaoPaulo("2026-07-20"),
+        category: "inicio",
         sortOrder: 0,
       },
       {
         coupleId: couple.id,
-        title: "💋 Primeiro beijo",
-        description: "Aconteceu ainda no primeiro encontro.",
+        title: "❤️ Primeiro encontro + primeiro beijo",
+        description: null,
         date: atSaoPaulo("2026-07-31"),
-        category: "beijo",
-        placeId: firstPlace.id,
+        category: "encontro",
         sortOrder: 1,
       },
       {
         coupleId: couple.id,
         title: "❤️ Segundo encontro",
-        description:
-          "Foi até a madrugada. Foi quando ela declarou estar muito apaixonada.",
+        description: null,
         date: atSaoPaulo("2026-08-02"),
         category: "encontro",
         sortOrder: 2,
       },
       {
         coupleId: couple.id,
-        title: "💐 Primeiro buquê",
-        description: 'Ela chamou o buquê de "maravilhoso".',
-        date: atSaoPaulo("2026-08-03"),
-        category: "presente",
+        title: "🔥 Primeira noite juntos",
+        description: null,
+        date: atSaoPaulo("2026-08-08"),
+        category: "intimidade",
         sortOrder: 3,
       },
       {
         coupleId: couple.id,
-        title: "🎁 The Blend",
-        description:
-          "Ela deu de presente o perfume The Blend, como um mês de namoro adiantado.",
-        date: atSaoPaulo("2026-08-07"),
-        category: "presente",
-        sortOrder: 4,
-      },
-      {
-        coupleId: couple.id,
-        title: "🔥 Nossa primeira noite juntos",
-        description: "Um marco importante na nossa intimidade.",
-        date: atSaoPaulo("2026-08-08"),
-        category: "intimidade",
-        sortOrder: 5,
-      },
-      {
-        coupleId: couple.id,
-        title: "👨‍👩‍👧‍👦 Apresentação à família",
-        description: "Stefani apresentou Gabriel à família dela.",
-        date: atSaoPaulo("2026-08-16"),
+        title: "👨‍👩‍👧 Conheci sua família",
+        description: null,
+        date: atSaoPaulo("2026-08-14"),
         category: "familia",
-        sortOrder: 6,
-      },
-      {
-        coupleId: couple.id,
-        title: "💌 A grande declaração",
-        description: "O dia em que Gabriel se declarou de verdade para Stefani.",
-        date: atSaoPaulo("2026-08-18"),
-        category: "declaracao",
-        sortOrder: 7,
+        sortOrder: 4,
       },
     ],
   });
@@ -177,8 +171,7 @@ async function main() {
       where: { id: existingLetter.id },
       data: {
         title: "Uma carta para você",
-        content:
-          "O texto desta carta ainda vai ser escrito com calma. Até lá, isto é só um placeholder.",
+        content: LETTER_CONTENT,
       },
     });
   } else {
@@ -186,27 +179,33 @@ async function main() {
       data: {
         coupleId: couple.id,
         title: "Uma carta para você",
-        content:
-          "O texto desta carta ainda vai ser escrito com calma. Até lá, isto é só um placeholder.",
+        content: LETTER_CONTENT,
       },
     });
   }
+
+  const songData = {
+    title: "Pra Sempre Com Você",
+    artist: "Jorge & Mateus",
+    url: "/uploads/pra-sempre-com-voce.mp3",
+    provider: "file",
+    coverUrl: "/uploads/pra-sempre-com-voce-cover.png",
+    note: null as string | null,
+    sortOrder: 0,
+  };
 
   const existingSong = await prisma.song.findFirst({
     where: { coupleId: couple.id },
   });
 
-  if (!existingSong) {
+  if (existingSong) {
+    await prisma.song.update({
+      where: { id: existingSong.id },
+      data: songData,
+    });
+  } else {
     await prisma.song.create({
-      data: {
-        coupleId: couple.id,
-        title: "A definir",
-        artist: "A definir",
-        url: "",
-        provider: "file",
-        note: "A música específica ainda será escolhida com a Stefani.",
-        sortOrder: 0,
-      },
+      data: { coupleId: couple.id, ...songData },
     });
   }
 
@@ -225,7 +224,7 @@ async function main() {
     console.warn("ADMIN_EMAIL / ADMIN_PASSWORD ausentes — AdminUser não foi criado.");
   }
 
-  console.log("Seed concluído: Gabriel & Stefani, 8 memórias, Itajaí (label público).");
+  console.log("Seed concluído: Gabriel & Stefani, 5 memórias, Itajaí (label público).");
 }
 
 main()

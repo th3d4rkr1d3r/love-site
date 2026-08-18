@@ -8,7 +8,9 @@ type PublicGateProps = {
 };
 
 export function PublicGate({ isPublic, nameA, nameB, children }: PublicGateProps) {
-  if (!isPublic) {
+  const visible = isPublic || process.env.NODE_ENV !== "production";
+
+  if (!visible) {
     return <ComingSoon nameA={nameA} nameB={nameB} />;
   }
 
