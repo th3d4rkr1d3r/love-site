@@ -92,7 +92,7 @@ export function ensureSiteAudio(url: string) {
       new Audio();
     audio.preload = "auto";
     audio.loop = true;
-    audio.playsInline = true;
+    audio.setAttribute("playsinline", "true");
     audio.volume = DEFAULT_VOLUME;
     bindAudio(audio);
   }
