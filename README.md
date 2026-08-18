@@ -27,7 +27,9 @@ npm run db:seed
 npm run dev
 ```
 
-Abra [http://localhost:3000](http://localhost:3000). Em desenvolvimento, `npm run db:migrate:dev` também vale (cria/nomeia migrations). **Em produção, nunca use `migrate dev`.**
+O Postgres do Docker escuta em **5433**. Nesta máquina `localhost`/`127.0.0.1` é interceptado por outro processo — o `.env` local usa `127.0.0.2:5433`. Se a 3000 estiver ocupada, `npx next dev -p 3456`.
+
+Em desenvolvimento, `npm run db:migrate:dev` também vale (cria/nomeia migrations). **Em produção, nunca use `migrate dev`.**
 
 ## Vercel
 
